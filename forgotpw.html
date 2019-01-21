@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>DBC Web App</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="js/aws-sdk-2.7.16.min.js"></script>
+    <script src="js/amazon-cognito-auth.min.js"></script>
+    <script src="js/amazon-cognito-identity.min.js"></script>
+    <script src="js/config.js"></script>
+<!--===============================================================================================-->
+</head>
+
+<body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
+				<form class="login100-form validate-form">
+					<div class="login100-form-title p-b-33">Forgot Password
+                    <p id="titleheader">Enter your email to receive verification code! </br>**(Please <b>do not</b> use Chrome browser for this feature.)</p>
+                </div>
+                <form id="Login">
+
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputUsername" placeholder="Email"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+                    
+					<div class="container-login100-form-btn m-t-20">
+                    <button type="button" onclick="forgotPasswordButton()" class="login100-form-btn">Send verification email!</button>
+					</div>
+					
+					<div class="text-center p-t-45 p-b-4">
+                        <a href="index.html" class="txt2 hov1">Sign In. ✌</a> /
+                        <a href="register.html" class="txt2 hov1">Register an account.</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+<script>
+    function forgotPasswordButton() {
+
+        // poolData - for connection purposes, using config.js file to 'login' into the right Cognito userpool made.
+        var poolData = {
+            UserPoolId: _config.cognito.userPoolId, // PoolId enter here
+            ClientId: _config.cognito.clientId,    // clientId enter here
+        };
+
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+        var userData = {
+            Username: document.getElementById("inputUsername").value,
+            Pool: userPool,
+        };
+        // using 'CognitoUser' to instantiate the project, 'userData'.
+        var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+        cognitoUser.forgotPassword({
+            onSuccess: function(result) {
+                // for testing purposes.
+                console.log('result: ' + result);
+                // for first pass validation
+                // change text on button when clicked.
+                document.getElementById("titleheader").value="Please check email for verification code!";
+            },
+            onFailure: function(err) {
+                // for validation
+                if ((document.getElementById("inputUsername").value) == "") {
+                    document.getElementById("titleheader").innerHTML = "Please enter email address.";
+                }
+                else {
+                    document.getElementById("titleheader").innerHTML = (err.message || JSON.stringify(err)) };
+                    // for testing purposes.
+                    //console.log(err);
+            },
+            inputVerificationCode() {
+                var prompt = document.getElementsByClassName("prompt");
+                var verificationCode = prompt('Please input verification code below ' , '');
+                prompt.innerHTML = verificationCode;
+                
+                var newPassword = prompt('Enter new password ' , '');
+                cognitoUser.confirmPassword(verificationCode, newPassword, this);
+            }
+        });
+    }
+
+</script>
+</body>
+
+</html>
