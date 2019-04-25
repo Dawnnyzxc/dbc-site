@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>DBC Web App</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+    <script src="./app.js"></script>
+    <script>
+       function getHtml(template) {
+          return template.join('\n');
+       }
+       listAlbums();
+    </script>
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="js/aws-sdk-2.7.16.min.js"></script>
+    <script src="js/amazon-cognito-auth.min.js"></script>
+    <script src="js/amazon-cognito-identity.min.js"></script>
+    <script src="js/config.js"></script>
+<!--===============================================================================================-->
+</head>
+<body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login1002 p-l-55 p-r-55 p-t-65 p-b-50">
+				<form class="login100-form validate-form">
+                    <div class="login100-form-title p-b-33">DBC Site Inspection Report - <User Name>
+                    <p id="titleheader">Use 2 mins estimated time to complete.</p>
+					</div>
+                <form id="Login">
+
+					<h3>1. Project Title</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputProjectTitle" placeholder="Project Title"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+
+					<h3>2. Project Reference No.</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputRefNo" placeholder="Project Reference No."/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+					
+					<h3>3. Construction Progress</h3>
+					Please select from the options below.</br></br>
+					<select id="engineerId" class="login90-select2" onchange="location = this.value;">
+						  <option value="#"> </option>
+						  <option value="#">Site Preparation</option>
+						  <option value="#">Piling</option>
+						  <option value="#">Excavation</option>
+						  <option value="#">Substructure</option>
+						  <option value="#">Superstructure</option>
+						  <option value="#">M&E Work</option>
+						  <option value="#">Others</option>
+						</select></br>
+					
+					<h3>4. Upload Photo</h3></br>
+						<input type=file accept="image/*">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</br></br>
+					
+					<h3>5. Description</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputDescrip" placeholder="Input Description"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+					
+					<h3>6. Upload Photo</h3></br>
+						<input type=file accept="image/*">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</br></br>
+					
+					<h3>7. Description</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputDescrip2" placeholder="Input Description"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+					
+					<h3>8. Upload Photo</h3></br>
+						<input type=file accept="image/*">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</br></br>
+					
+					<h3>9. Description</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputDescrip3" placeholder="Input Description"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+					
+					<h3>10. Upload Photo</h3></br>
+						<input type=file accept="image/*">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</br></br>
+					
+					<h3>11. Description</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputDescrip4" placeholder="Input Description"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+					
+					<h3>12. Upload Photo</h3></br>
+						<input type=file accept="image/*">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</br></br>
+					
+					<h3>13. Description</h3></br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputDescrip5" placeholder="Input Description"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div></br>
+					
+					<h3>14. Risk Level</h3>
+					Please select the risk level of the ongoing work.</br></br>
+					<select id="engineerId" class="login90-select2">
+						  <option value="#"> </option>
+						  <option value="#">4 - Low</option>
+						  <option value="#">3 - Medium</option>
+						  <option value="#">2 - High</option>
+						  <option value="#">1 - Critical</option>
+						  </select></br>
+
+					<h3>15. Are all the works supervised by the PE assignee or safety personnel?</h3></br>
+					<select id="engineerId" class="login90-select2">
+						  <option value="#"> </option>
+						  <option value="#">No</option>
+						  <option value="#">Yes</option>
+						</select></br>
+					
+					<h3>16. Are all the works executed according to the approved method statement?</h3></br>
+					<select id="engineerId" class="login90-select2">
+						  <option value="#"> </option>
+						  <option value="#">No</option>
+						  <option value="#">Yes</option>
+						</select></br>
+
+                    <div class="container-login100-form-btn m-t-20">
+                    <button type="button" onclick="submitButton()" class="login100-form-btn">Submit</button>
+					</div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+
+</html>
