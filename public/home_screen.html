@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+	<title>DBC Web App</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/qrcodescan.css">
+	<link rel="stylesheet" href="css/style.css">
+<!--===============================================================================================-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!--<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>-->
+	<script src="https://cdn.qrstuff.com/include/modules/custom/qrcodescan/instascan/custom/instascan.min.js"></script>
+	<script src="https://dmla.github.io/jsqrcode/src/qr_packed.js"></script>
+	<script src="js/main.js"></script>
+<script>
+	/*function selectChange()
+	{
+		var s = document.getElementById("engineerId");
+		var e = document.getElementById("siteInspectId");
+		var idStr = s.options[s.selectedIndex].value;
+		var baseURL = "https://form.gov.sg/forms/lta/";
+		if (idStr == "0") {
+			alert("Please select an engineer first");
+		} else if (idStr == "1"){
+			.setAttribute("href", baseURL + "5bd69150e1ab44000f75879d");
+		} else if (idStr == "2") {
+			e.setAttribute("href", baseURL + "5bd69152e1ab44000f75879f");
+		} else if (idStr == "3") {
+			e.setAttribute("href", baseURL + "5bd69155e1ab44000f7587a1");
+		} else if (idStr == "4") {
+			e.setAttribute("href", baseURL + "5bd69156e1ab44000f7587a2");
+		} else if (idStr == "5") {
+			e.setAttribute("href", baseURL + "5bd6914ce1ab44000f75879c");
+		} else if (idStr == "6") {
+			e.setAttribute("href", baseURL + "5bd69154e1ab44000f7587a0");
+		} else if (idStr == "7") {
+			e.setAttribute("href", baseURL + "5bd69151e1ab44000f75879e");
+		} else if (idStr == "8") {
+			e.setAttribute("href", baseURL + "5bce975e46d2f1000faa8f19");
+		}
+	}*/
+</script></head>
+
+<body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
+				<form class="login100-form validate-form">
+					<span class="login100-form-title p-b-33">
+						DBC Site Recce Home
+					</span>
+					<div class="container-login100-form-btn m-t-20">
+						<img src="images/sg-form.jpg" alt="Site  Report" class="appImage">
+						<div class="login90-form-btn">
+							Site Inspection
+						</div>
+						<select id="engineerId" class="login90-select" onchange="location = this.value;">
+						  <option value="#">Please Select Engineer</option>
+						  <option value="form.html">Chan Chee Weng</option>
+						  <option value="form.html">Koh Chin Seng</option>
+						  <option value="form.html">Tay Tun Ling</option>
+						</select>
+						<div class="container-login100-form-btn m-t-20">
+							<input id="qrscanvalue" disabled="">
+							<div class="login100-form-btn2">
+								<img src="images/camera.png" height="40" onclick="myFunction()">
+								<video id="preview" width="200px" style="display: none; transform: scaleX(-1);" autoplay="true" class="inactive"></video>
+							</div>
+							<div class="login100-form-btn2">
+								<!--<img src="images/qrcodescan.png" capture="camera" height="40" onclick="openQRCamera(this);" />-->
+								<label class="qrcode-text-btn">
+									<input type="file" accept="image/*" capture="camera" onchange="openQRCamera(this);">
+								</label> 
+							</div> 
+						</div>
+					</div>
+					<div class="container-login100-form-btn m-t-20">
+						<a href="https://drive.google.com/open?id=1vSJnxAQFFahCa6rLQsDpaFvaI6ACWkGz&amp;usp=sharing">
+							<img src="images/sg-map.png" alt="SG Map" class="appImage">
+						</a>
+						<a href="https://drive.google.com/open?id=1vSJnxAQFFahCa6rLQsDpaFvaI6ACWkGz&amp;usp=sharing" class="login80-form-btn">
+							Interactive Google Map
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+    <script type="text/javascript">
+		let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+		scanner.addListener('scan', function (content) {
+			//alert(content);
+			document.getElementById('qrscanvalue').value = content;
+			var x = document.getElementById("preview");
+			if (x.style.display === "none") {
+				x.style.display = "block";
+			  } else {
+				x.style.display = "none";
+			  }
+		});
+		Instascan.Camera.getCameras().then(function (cameras) {
+			if (cameras.length > 0) {
+				scanner.start(cameras[1]);
+			} else {
+				console.error('No cameras found.');
+			}
+		}).catch(function (e) {
+			console.error(e);
+		});
+		function showQRIntro() {
+			return confirm("Use your camera to take a picture of a QR code.");
+		}
+		function myFunction() {
+		  var x = document.getElementById("preview");
+		  if (x.style.display === "none") {
+			x.style.display = "block";
+		  } else {
+			x.style.display = "none";
+		  }
+		}
+		function openQRCamera(node) {
+		  var reader = new FileReader();
+		  reader.onload = function() {
+			node.value = "";
+			qrcode.callback = function(res) {
+			  if(res instanceof Error) {
+				alert("No QR code found. Please make sure the QR code is within the camera's frame and try again.");
+			  } else {
+				//node.parentNode.previousElementSibling.value = res;
+				document.getElementById('qrscanvalue').value = res;
+			  }
+			};
+			qrcode.decode(reader.result);
+		  };
+		  reader.readAsDataURL(node.files[0]);
+		}
+	</script>
+
+</body>
+</html>

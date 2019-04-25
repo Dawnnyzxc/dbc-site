@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>DBC Web App</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="js/aws-sdk-2.7.16.min.js"></script>
+    <script src="js/amazon-cognito-auth.min.js"></script>
+    <script src="js/amazon-cognito-identity.min.js"></script>
+    <script src="js/config.js"></script>
+<!--===============================================================================================-->
+</head>
+
+<body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
+				<form class="login100-form validate-form">
+                    <div class="login100-form-title p-b-33">Registration
+                    <p id="titleheader">Sign up here or login below.</p>
+					</div>
+                <form id="Login">
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" id="inputName" placeholder="Name"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+					</br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="email" id="inputEmail" placeholder="Email"/>
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+					</br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="password" id="inputPassword" placeholder="Password">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+					</br>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="password" id="confirmPassword" placeholder="Password">
+						<span class="focus-input100-1"></span>
+						<span class="focus-input100-2"></span>
+					</div>
+
+					<div class="container-login100-form-btn m-t-20">
+                    <button type="button" onclick="registerButton()" class="login100-form-btn">Register</button>
+					</div>
+					
+                    <div class="text-center p-t-45 p-b-4">
+                        <a href="index.html" class="txt2 hov1">Have an account? Login. 😬</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+</html>
+
+<script>
+
+    //  AmazonCognitoIdentity - library for Cognito.
+    //  PoolData - using _config file to pull data to line 84 and 85.
+    var username;
+    var password;
+    var personalname;
+    var poolData;
+
+    // for email validation
+    const emailCheckRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+
+    function registerButton() {
+
+        personalname = document.getElementById("inputName").value;
+        username = document.getElementById("inputEmail").value;
+
+        // contain/store our attributeList - email and name.
+        var attributeList = [];
+
+        var dataEmail = {
+            Name: 'email',
+            Value: username, // this will be the username intended.
+        };
+
+        var dataPersonalName = {
+            Name: 'name',
+            Value: personalname, //get from form field
+        };
+
+        var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+        var attributePersonalName = new AmazonCognitoIdentity.CognitoUserAttribute(dataPersonalName);
+
+        // push to attributeList array.
+        attributeList.push(attributeEmail);
+        attributeList.push(attributePersonalName);
+
+        // validation for all fields (form validation for first 4 if-else statements,
+        // last validation via AWS Cognito content.)
+
+        // Note that it lacks of validation for password constraints.
+        if (document.getElementById("inputPassword").value != document.getElementById("confirmPassword").value) {
+            // ensure passwords entered are the same.
+            document.getElementById("titleheader").innerHTML = "Passwords mismatch! Please try again.";
+        }
+        else if ((document.getElementById("inputName").value == "") || ((document.getElementById("inputEmail").value) == "")) {
+            // check if either of them are blanks.
+            document.getElementById("titleheader").innerHTML = "Please enter name and email address correctly.";
+
+        }
+        else if ((document.getElementById("inputPassword").value || document.getElementById("confirmPassword").value) == "") {
+            // ensure password is entered within 3rd textbox.
+            document.getElementById("titleheader").innerHTML = "Please enter a password.";
+        }
+        else {
+            password = document.getElementById("inputPassword").value;
+            username = document.getElementById("inputEmail").value;
+
+            // create pooldata variable for usuerpoolid and config (in this statement to allow 'signUp' to be used.)
+            var poolData = {
+                UserPoolId: _config.cognito.userPoolId, // PoolId enter here
+                ClientId: _config.cognito.clientId,    // clientId enter here
+            };
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+            // validation of content within AWS Cognito.
+            userPool.signUp(username, password, attributeList, null, function (err, result) {
+                if (err) {
+                    // for showing errors
+                    document.getElementById("titleheader").innerHTML = (err.message || JSON.stringify(err));
+                    return;
+                }
+                cognitoUser = result.user;
+                console.log('User name is ' + cognitoUser.getUsername());
+                // change elements of page
+                document.getElementById("titleheader").innerHTML = "Thank you for registering! 🎃";
+                alert("Successfully registered! Check your email for verification!")
+            });
+        }
+    }
+</script>
