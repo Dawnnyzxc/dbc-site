@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>DBC Web App</title>
+	<title>DBC WEB APP2</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -10,19 +10,120 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	
 	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
-    <script src="./app.js"></script>
-    <script>
-       function getHtml(template) {
-          return template.join('\n');
-       }
-       listAlbums();
-    </script>
 	
 	<script src="js/jquery.min.js"></script>
 	<script src="js/aws-sdk-2.7.16.min.js"></script>
     <script src="js/amazon-cognito-auth.min.js"></script>
     <script src="js/amazon-cognito-identity.min.js"></script>
     <script src="js/config.js"></script>
+    <script type="application/javascript">
+        $(document).ready(function(){
+        $("#file1").change(function(e){
+            fileName1 = e.target.files[0].name;
+            alert('The file "' + fileName1 +  '" has been selected.');
+            
+        });
+        $('#file2').change(function(e){
+            fileName2 = e.target.files[0].name;
+            alert('The file "' + fileName2 +  '" has been selected.');
+            
+        });
+            $('#file3').change(function(e){
+            fileName3 = e.target.files[0].name;
+            alert('The file "' + fileName3 +  '" has been selected.');
+            
+        });
+            $('#file4').change(function(e){
+            fileName4 = e.target.files[0].name;
+            alert('The file "' + fileName4 +  '" has been selected.');
+            
+        });
+            $('#file5').change(function(e){
+            fileName5 = e.target.files[0].name;
+            alert('The file "' + fileName5 +  '" has been selected.');
+            
+        });
+    });
+        function submitButton(){
+            //createAlbum("test")
+            addPhoto();
+            addData();
+        }
+        var albumBucketName = 'dbcfiles';
+var bucketRegion = 'ap-southeast-1';
+var IdentityPoolId = 'ap-southeast-1:f99e8df5-75a7-4e11-b883-d26f94483351';
+
+AWS.config.update({
+  region: bucketRegion,
+  credentials: new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: IdentityPoolId
+  })
+});
+var bc='112';
+var s3 = new AWS.S3({
+  apiVersion: '2006-03-01',
+  params: {Bucket: albumBucketName}
+});
+var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+        function addData(){
+		var expires = new Date();
+            var params = {
+  TableName: 'my-proj4-dev',
+  Item: {
+    'id' : {S:$('#inputRefNo').val()},
+      'projecttitle':{S:$('#inputProjectTitle').val()},
+    'constructionprogress':{S:$("#engineerId option:selected").text()},
+    'inputDescrip':{S:$('#inputDescrip').val()},
+    'inputDescrip2':{S:$('#inputDescrip2').val()},
+    'inputDescrip3':{S:$('#inputDescrip3').val()},
+    'inputDescrip4':{S:$('#inputDescrip4').val()},
+    'inputDescrip5':{S:$('#inputDescrip5').val()},
+    'risklevel':{S:$("#risklevel option:selected").text()},
+    'worksuper':{S:$("#worksuper option:selected").text()},
+    'workexec':{S:$("#workexec option:selected").text()},
+    'file1':{S:$('#file1').val().split('\\').pop()},
+	'timestamp':{S:expires.toISOString()},
+	
+//    'file2':{S:filename2},
+//    'file3':{S:fileName3},
+//    'file4':{S:filename4},
+//    'file5':{S:filename5}
+      
+      }
+};
+            ddb.putItem(params, function(err, data) {
+  if (err) {
+    console.log("Error", err);
+  } else {
+    console.log("Success", data);
+  }
+});
+        }
+        function addPhoto(filename) {
+            var albumName="test";
+            var files = document.getElementById('file1').files;
+  if (!files.length) {
+    return alert('Please choose a file to upload first.');
+  }
+  var file = files[0];
+  var fileName = file.name;
+  var albumPhotosKey = encodeURIComponent(albumName) + '//';
+
+  var photoKey = albumPhotosKey + fileName;
+
+  var photoKey = albumPhotosKey + fileName;
+  s3.upload({
+    Key: photoKey,
+    Body: file,
+    ACL: 'public-read'
+  }, function(err, data) {
+    if (err) {
+      return alert('There was an error uploading your photo: ', err);
+    }
+    alert('Successfully uploaded photo and data.');
+  });
+        }
+    </script>
 <!--===============================================================================================-->
 </head>
 <body>
@@ -63,7 +164,7 @@
 						</select></br>
 					
 					<h3>4. Upload Photo</h3></br>
-						<input type=file accept="image/*">
+						<input id="file1" type=file accept="image/*">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</br></br>
@@ -76,7 +177,7 @@
 					</div></br>
 					
 					<h3>6. Upload Photo</h3></br>
-						<input type=file accept="image/*">
+						<input id="file2" type=file accept="image/*">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</br></br>
@@ -89,7 +190,7 @@
 					</div></br>
 					
 					<h3>8. Upload Photo</h3></br>
-						<input type=file accept="image/*">
+						<input id="file3" type=file accept="image/*">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</br></br>
@@ -102,7 +203,7 @@
 					</div></br>
 					
 					<h3>10. Upload Photo</h3></br>
-						<input type=file accept="image/*">
+						<input id="file4" type=file accept="image/*">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</br></br>
@@ -115,7 +216,7 @@
 					</div></br>
 					
 					<h3>12. Upload Photo</h3></br>
-						<input type=file accept="image/*">
+						<input id="file5" type=file accept="image/*">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</br></br>
@@ -129,7 +230,7 @@
 					
 					<h3>14. Risk Level</h3>
 					Please select the risk level of the ongoing work.</br></br>
-					<select id="engineerId" class="login90-select2">
+					<select id="risklevel" class="login90-select2">
 						  <option value="#"> </option>
 						  <option value="#">4 - Low</option>
 						  <option value="#">3 - Medium</option>
@@ -138,14 +239,14 @@
 						  </select></br>
 
 					<h3>15. Are all the works supervised by the PE assignee or safety personnel?</h3></br>
-					<select id="engineerId" class="login90-select2">
+					<select id="worksuper" class="login90-select2">
 						  <option value="#"> </option>
 						  <option value="#">No</option>
 						  <option value="#">Yes</option>
 						</select></br>
 					
 					<h3>16. Are all the works executed according to the approved method statement?</h3></br>
-					<select id="engineerId" class="login90-select2">
+					<select id="workexec" class="login90-select2">
 						  <option value="#"> </option>
 						  <option value="#">No</option>
 						  <option value="#">Yes</option>
